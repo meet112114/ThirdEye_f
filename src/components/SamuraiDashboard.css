@@ -729,28 +729,83 @@
   .col-left {
     grid-column: 1;
     padding: 0 1.4rem;
+    align-items: center;
+    text-align: center;
   }
   .col-right {
     grid-column: 1;
     padding: 1.5rem 1.4rem 0;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
   }
+
+  /* Centering Hero */
+  .hero-title-rule {
+    margin: 1.4rem auto;
+  }
+  .hero-quote {
+    margin: 0 auto;
+  }
+
+  /* Centering Score */
   .score-container {
-    align-items: flex-start;
+    align-items: center;
   }
   .score-descriptor {
-    text-align: left;
+    text-align: center;
   }
+
+  /* Centering Stats section completely */
+  #stats .section-grid {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .stats-grid,
+  .stats-right-grid {
+    width: 100%;
+    max-width: 450px; /* Keep cards from being too wide on tablet-size phones */
+    margin: 0 auto;
+    align-items: center;
+  }
+  .stats-heading,
   .stats-right-label {
-    text-align: left;
+    text-align: center;
+    width: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .stat-card-header {
+    justify-content: center;
+    gap: 0.8rem;
+    width: 100%;
+  }
+  .stat-card,
+  .stat-card-right {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .stat-bar-track {
+    width: 90%; /* Slightly smaller for a more centered, card-like look */
+    margin: 0.8rem auto;
   }
   .stat-card-right .stat-card-header {
     flex-direction: row;
   }
   .stat-card-right .stat-card-name,
-  .stat-card-right .stat-card-sub {
-    text-align: left;
+  .stat-card-right .stat-card-sub,
+  .stat-card .stat-card-name,
+  .stat-card .stat-card-sub {
+    text-align: center;
+    width: 100%;
   }
+
   .philosophy-center {
     gap: 1rem;
   }
@@ -762,14 +817,96 @@
     gap: 0.5rem;
     align-items: center;
   }
+  #footer-bar {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+    padding: 2rem 1.4rem;
+  }
 }
 
+@media (max-width: 768px) {
+  #samurai-bg {
+    display: none !important;
+  }
+  
+  .samurai-dashboard-root {
+    /* Mobile-only Light Mode overrides */
+    --black: #fcfcfc;
+    --deep: #f5f5f5;
+    --dark: #ffffff;
+    --panel: rgba(255, 255, 255, 0.92);
+    --panel-hover: rgba(248, 248, 248, 0.98);
+    --white: #1a1a1a;
+    --white-dim: rgba(20, 20, 20, 0.85);
+    --white-faint: rgba(20, 20, 20, 0.5);
+    --crimson-glow: rgba(139, 0, 0, 0.1);
+    
+    background-color: #ffffff !important;
+  }
+
+  /* Adjust atmospheric elements for visibility on light bg */
+  #blur-veil {
+    backdrop-filter: blur(0px) brightness(1.2) !important;
+    -webkit-backdrop-filter: blur(0px) brightness(1.2) !important;
+  }
+  #bg-overlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0) 25%,
+      rgba(255, 255, 255, 0) 75%,
+      rgba(255, 255, 255, 0.8) 100%
+    ) !important;
+  }
+  #crimson-fog {
+    background: radial-gradient(
+      ellipse 60% 50% at 50% 100%,
+      rgba(150, 0, 0, 0.15) 0%,
+      transparent 70%
+    ) !important;
+  }
+  /* Keep embers visibility on white bg */
+  #ember-canvas {
+    opacity: 0.45 !important;
+    mix-blend-mode: multiply;
+  }
+  
+  .hero-eyebrow {
+    color: var(--crimson);
+    font-weight: 700;
+  }
+  .hero-title {
+    text-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  .stat-card, .stat-card-right {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+    border: 1px solid rgba(139, 0, 0, 0.1);
+  }
+  .stat-bar-track {
+    background: rgba(0, 0, 0, 0.08);
+  }
+  .philosophy-kanji {
+    color: rgba(139, 0, 0, 0.18);
+  }
+  #footer-bar {
+    background: rgba(255, 255, 255, 0.85);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .score-ring-track {
+    stroke: rgba(0, 0, 0, 0.04);
+  }
+  .score-ring-wrap svg {
+    filter: drop-shadow(0 4px 12px rgba(139, 0, 0, 0.15));
+  }
+}
 
 .samurai-dashboard-root {
   position: relative;
   isolation: isolate;
   min-height: calc(100vh - 65px);
   overflow-x: hidden;
+  background-color: #050505; /* Fallback deep dark background when img is hidden on non-mobile */
 }
 #page-wrapper { position: relative; z-index: 3; }
 
