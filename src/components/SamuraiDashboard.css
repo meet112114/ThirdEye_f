@@ -830,6 +830,12 @@
     display: none !important;
   }
   
+  /* Reset left offset for atmospheric layers on mobile */
+  #blur-veil, #crimson-fog, #ember-canvas, #bg-overlay {
+    left: 0 !important;
+    width: 100% !important;
+  }
+  
   /* Only apply light mode on mobile WHEN the light theme is active */
   [data-theme="light"] .samurai-dashboard-root {
     --black: #fcfcfc;
