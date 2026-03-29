@@ -1,0 +1,293 @@
+/* ─── Momentum Tracking Module ────────────────────────────── */
+
+.momentum-container {
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 24px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.momentum-bento {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.momentum-hero-card {
+  background: var(--mantle);
+  border: 1px solid var(--surface0);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.momentum-hero-card::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background: radial-gradient(circle at top right, rgba(148, 226, 213, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.momentum-score {
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: -2px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.momentum-score-arrow {
+  color: var(--green);
+  opacity: 0.8;
+}
+
+.momentum-program-card {
+  background: var(--mantle);
+  border: 1px solid var(--surface0);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: all var(--transition);
+  cursor: pointer;
+  position: relative;
+}
+
+.momentum-program-card:hover {
+  border-color: var(--surface1);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+}
+
+.momentum-program-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.momentum-program-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--surface0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.momentum-program-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-top: 12px;
+}
+
+.momentum-program-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--surface0);
+}
+
+.momentum-stat-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.momentum-stat-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--subtext0);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.momentum-stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.momentum-week-strip {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.momentum-day-dot {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--surface0);
+  transition: all 0.3s ease;
+}
+
+.momentum-active-glow {
+  box-shadow: 0 0 12px currentColor;
+}
+
+/* Detail View */
+.momentum-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.momentum-detail-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.momentum-stat-box {
+  background: var(--mantle);
+  border: 1px solid var(--surface0);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Month Calendar Grid */
+.momentum-calendar {
+  background: var(--mantle);
+  border: 1px solid var(--surface0);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+}
+
+.momentum-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .momentum-calendar-grid { gap: 12px; }
+}
+
+.momentum-cal-header {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--subtext0);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.momentum-day-tile {
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all var(--transition);
+  cursor: pointer;
+  border: 1px solid var(--surface0);
+  background: var(--base);
+  color: var(--subtext1);
+}
+
+.momentum-day-tile:hover:not(:disabled) {
+  border-color: var(--text);
+}
+
+.momentum-day-tile.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.momentum-day-tile.logged {
+  color: var(--crust);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.momentum-day-tile.missed {
+  background: rgba(243, 139, 168, 0.1);
+  border-color: rgba(243, 139, 168, 0.3);
+  color: var(--red);
+}
+
+.momentum-day-tile.today {
+  box-shadow: inset 0 0 0 2px var(--text);
+}
+
+/* Action Bar */
+.momentum-fab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background: var(--text);
+  color: var(--base);
+  border-radius: 99px;
+  font-weight: 800;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: transform var(--transition);
+}
+
+.momentum-fab:hover {
+  transform: scale(1.05);
+}
+
+.momentum-chart-container {
+  background: var(--mantle);
+  border: 1px solid var(--surface0);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  margin-top: 32px;
+}
+
+/* Range Slider Customization */
+.momentum-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--surface1);
+  outline: none;
+}
+
+.momentum-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--text);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  transition: transform 0.1s;
+}
+
+.momentum-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
