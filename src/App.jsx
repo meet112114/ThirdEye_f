@@ -1,4 +1,6 @@
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import api from './api/axios';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/Layout';
@@ -34,9 +36,28 @@ function PublicRoute({ children }) {
   return user ? <Navigate to="/today" replace /> : children;
 }
 
+
+
+function HealthPing() {
+  useEffect(() => {
+    // Ping immediately
+    api.get('/health').catch(() => {});
+    
+    // Then every 30s
+    const interval = setInterval(() => {
+      api.get('/health').catch(() => {});
+    }, 30000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  return null;
+}
+
 export default function App() {
   return (
     <AuthProvider>
+      <HealthPing />
       <BrowserRouter>
         <Toaster
           position="top-right"
