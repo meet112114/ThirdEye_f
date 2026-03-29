@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./SamuraiDashboard.css";
 
 const DEFAULT_BG_IMAGES = ["S_1_.png", "S_2_.png", "S_3_.png", "S_4_.png", "S_5_.png"];
@@ -118,6 +118,8 @@ export default function SamuraiDashboard({
   const canvasRef = useRef(null);
   const ringFillRef = useRef(null);
 
+  const [bgLoaded, setBgLoaded] = useState(false);
+
   const normalizedScore = Number.isFinite(Number(score)) ? Number(score) : 0;
   const safeScore = Math.max(0, Math.min(100, normalizedScore));
 
@@ -140,6 +142,11 @@ export default function SamuraiDashboard({
 
   const resolvedDescriptor = scoreDescriptor ?? getScoreDescriptor(safeScore);
   const bgSrc = useMemo(() => getBgImage(safeScore, backgroundImages), [safeScore, backgroundImages]);
+
+  // Reset loading state when the background image source changes
+  useEffect(() => {
+    setBgLoaded(false);
+  }, [bgSrc]);
 
   const leftCards = differentScores?.left ?? DEFAULT_DIFFERENT_SCORES.left;
   const rightCards = differentScores?.right ?? DEFAULT_DIFFERENT_SCORES.right;
@@ -379,7 +386,14 @@ export default function SamuraiDashboard({
   return (
     <div ref={wrapperRef} className="samurai-dashboard-root">
       {/* Fixed background + atmosphere */}
-      <img id="samurai-bg" src={bgSrc} alt="Samurai background" aria-hidden="true" />
+      <img 
+        id="samurai-bg" 
+        src={bgSrc} 
+        alt="Samurai background" 
+        aria-hidden="true" 
+        onLoad={() => setBgLoaded(true)}
+        className={bgLoaded ? "bg-loaded" : "bg-loading"}
+      />
       <div id="blur-veil" ref={blurVeilRef} aria-hidden="true" />
       <div id="bg-overlay" aria-hidden="true" />
       <div id="crimson-fog" aria-hidden="true" />
