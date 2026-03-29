@@ -830,8 +830,8 @@
     display: none !important;
   }
   
-  .samurai-dashboard-root {
-    /* Mobile-only Light Mode overrides */
+  /* Only apply light mode on mobile WHEN the light theme is active */
+  [data-theme="light"] .samurai-dashboard-root {
     --black: #fcfcfc;
     --deep: #f5f5f5;
     --dark: #ffffff;
@@ -845,12 +845,11 @@
     background-color: #ffffff !important;
   }
 
-  /* Adjust atmospheric elements for visibility on light bg */
-  #blur-veil {
+  [data-theme="light"] #blur-veil {
     backdrop-filter: blur(0px) brightness(1.2) !important;
     -webkit-backdrop-filter: blur(0px) brightness(1.2) !important;
   }
-  #bg-overlay {
+  [data-theme="light"] #bg-overlay {
     background: linear-gradient(
       to bottom,
       rgba(255, 255, 255, 0.6) 0%,
@@ -859,44 +858,44 @@
       rgba(255, 255, 255, 0.8) 100%
     ) !important;
   }
-  #crimson-fog {
+  [data-theme="light"] #crimson-fog {
     background: radial-gradient(
       ellipse 60% 50% at 50% 100%,
       rgba(150, 0, 0, 0.15) 0%,
       transparent 70%
     ) !important;
   }
-  /* Keep embers visibility on white bg */
-  #ember-canvas {
+  [data-theme="light"] #ember-canvas {
     opacity: 0.45 !important;
     mix-blend-mode: multiply;
   }
   
-  .hero-eyebrow {
+  [data-theme="light"] .hero-eyebrow {
     color: var(--crimson);
     font-weight: 700;
   }
-  .hero-title {
+  [data-theme="light"] .hero-title {
     text-shadow: 0 2px 10px rgba(0,0,0,0.05);
   }
-  .stat-card, .stat-card-right {
+  [data-theme="light"] .stat-card, 
+  [data-theme="light"] .stat-card-right {
     box-shadow: 0 8px 30px rgba(0,0,0,0.06);
     border: 1px solid rgba(139, 0, 0, 0.1);
   }
-  .stat-bar-track {
+  [data-theme="light"] .stat-bar-track {
     background: rgba(0, 0, 0, 0.08);
   }
-  .philosophy-kanji {
+  [data-theme="light"] .philosophy-kanji {
     color: rgba(139, 0, 0, 0.18);
   }
-  #footer-bar {
+  [data-theme="light"] #footer-bar {
     background: rgba(255, 255, 255, 0.85);
     border-top: 1px solid rgba(0, 0, 0, 0.08);
   }
-  .score-ring-track {
+  [data-theme="light"] .score-ring-track {
     stroke: rgba(0, 0, 0, 0.04);
   }
-  .score-ring-wrap svg {
+  [data-theme="light"] .score-ring-wrap svg {
     filter: drop-shadow(0 4px 12px rgba(139, 0, 0, 0.15));
   }
 }

@@ -19,13 +19,9 @@ export default function SamuraiPage() {
     });
   }, []);
 
-  if (momentumLoading || workoutLoading) {
-     return (
-        <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#0a0a0a' }}>
-           <div className="spinner"></div>
-        </div>
-     );
-  }
+  // We no longer block on loading here. 
+  // We let SamuraiDashboard render with defaults while data is being fetched.
+  const isActuallyLoading = momentumLoading || workoutLoading;
 
   // Process data for today
   const todayStr = format(new Date(), 'yyyy-MM-dd');
