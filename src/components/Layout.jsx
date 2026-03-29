@@ -79,11 +79,7 @@ export default function Layout({ children }) {
                 )}
                 {/* Main navigation tabs */}
                 <nav className={`main-sidebar ${isSidebarOpen ? 'expanded' : 'collapsed'}`} aria-label="Main navigation">
-                    <div className="sidebar-toggle-wrap">
-                        <button className="btn-icon sidebar-toggle-desktop" onClick={toggleSidebar} aria-label="Toggle sidebar">
-                            {isSidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-                        </button>
-                    </div>
+                    
                     <div className="sidebar-links">
                         <NavLink to="/today" data-label="Today" className={({ isActive }) => `nav-tab ${isActive ? 'active' : ''}`} id="nav-today">
                             <Sun size={20} />
