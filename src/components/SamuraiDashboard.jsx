@@ -543,12 +543,7 @@ export default function SamuraiDashboard({
           </div>
         </section>
 
-        {/* FOOTER */}
-        <footer id="footer-bar" role="contentinfo">
-          <span className="footer-brand">{footerBrand}</span>
-          {/* Chinese heading kept hardcoded (as requested) */}
-          <span className="footer-mark">三 目 · 武士道</span>
-        </footer>
+       
       </div>
     </div>
   );
