@@ -2,28 +2,28 @@ import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Pencil, Trash2, CheckCircle, PauseCircle, PlayCircle, Circle, Flame } from 'lucide-react';
 import { computeProgramStats } from '../pages/momentum/utils/scoring';
+import api from '../api/axios';
 
 const DAY_ABBR = { monday: 'Mon', tuesday: 'Tue', wednesday: 'Wed', thursday: 'Thu', friday: 'Fri', saturday: 'Sat', sunday: 'Sun' };
 const META_LEN = 120;
 
 export default function GoalCard({ goal, onEdit, onDelete, onStatusChange, onTasksChange }) {
     const [expanded, setExpanded] = useState(false);
+    const [tasksExpanded, setTasksExpanded] = useState(false);
     const [loading, setLoading] = useState(false);
     const [linkedMom, setLinkedMom] = useState(null);
 
     useEffect(() => {
         if (!goal.linkedProgram) return;
-        try {
-            const local = localStorage.getItem('momentum_data');
-            if (local) {
-               const data = JSON.parse(local);
-               const p = data.programs?.find(x => x.id === goal.linkedProgram);
-               if (p) {
-                   const stats = computeProgramStats(p, data.logs || []);
-                   setLinkedMom({ p, ...stats });
-               }
-            }
-        } catch(e) {}
+        api.get('/momentum')
+            .then(res => {
+                const p = (res.data.programs || []).find(x => x.id === goal.linkedProgram);
+                if (p) {
+                    const stats = computeProgramStats(p, res.data.logs || []);
+                    setLinkedMom({ p, ...stats });
+                }
+            })
+            .catch(() => {});
     }, [goal.linkedProgram]);
 
     const isLong = goal.metadata?.length > META_LEN;
@@ -97,45 +97,77 @@ export default function GoalCard({ goal, onEdit, onDelete, onStatusChange, onTas
                 </div>
             )}
 
-            {goal.tasks && goal.tasks.length > 0 && (
-                <div className="goal-tasks-container">
-                    <div className="goal-tasks-header" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', alignItems: 'center' }}>
-                        <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--subtext0)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Progress</span>
-                        <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text)', background: 'var(--surface0)', padding: '4px 10px', borderRadius: '12px' }}>
-                            {goal.tasks.filter(t => t.completed).length} / {goal.tasks.length}
-                        </span>
-                    </div>
-                    <div className="goal-progress-bar" style={{ height: '8px', background: 'var(--surface0)', borderRadius: '999px', overflow: 'hidden', marginBottom: '20px', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.2)' }}>
-                        <div className="goal-progress-fill" style={{ 
-                            height: '100%', 
-                            background: 'linear-gradient(90deg, var(--teal), var(--green))', 
-                            width: `${Math.round((goal.tasks.filter(t => t.completed).length / goal.tasks.length) * 100)}%`, 
-                            transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)', 
-                            boxShadow: '0 0 10px rgba(166, 227, 161, 0.5)' 
-                        }} />
-                    </div>
-                    <div className="goal-task-list" style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
-                        {goal.tasks.map((t, idx) => (
-                            <button 
-                                key={idx} 
-                                onClick={() => toggleTask(idx)}
-                                disabled={loading}
-                                className="custom-task-btn"
+            {goal.tasks && goal.tasks.length > 0 && (() => {
+                const SHOW_PENDING = 5;
+                const SHOW_DONE = 2;
+                const pending = goal.tasks.map((t, i) => ({ ...t, _idx: i })).filter(t => !t.completed);
+                const done    = goal.tasks.map((t, i) => ({ ...t, _idx: i })).filter(t => t.completed);
+                const visiblePending = tasksExpanded ? pending : pending.slice(0, SHOW_PENDING);
+                const visibleDone    = tasksExpanded ? done    : done.slice(0, SHOW_DONE);
+                const visibleTasks   = [...visiblePending, ...visibleDone];
+                const hiddenCount    = goal.tasks.length - visibleTasks.length;
+
+                return (
+                    <div className="goal-tasks-container">
+                        <div className="goal-tasks-header" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', alignItems: 'center' }}>
+                            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--subtext0)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Progress</span>
+                            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text)', background: 'var(--surface0)', padding: '4px 10px', borderRadius: '12px' }}>
+                                {goal.tasks.filter(t => t.completed).length} / {goal.tasks.length}
+                            </span>
+                        </div>
+                        <div className="goal-progress-bar" style={{ height: '8px', background: 'var(--surface0)', borderRadius: '999px', overflow: 'hidden', marginBottom: '20px', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.2)' }}>
+                            <div className="goal-progress-fill" style={{ 
+                                height: '100%', 
+                                background: 'linear-gradient(90deg, var(--teal), var(--green))', 
+                                width: `${Math.round((goal.tasks.filter(t => t.completed).length / goal.tasks.length) * 100)}%`, 
+                                transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)', 
+                                boxShadow: '0 0 10px rgba(166, 227, 161, 0.5)' 
+                            }} />
+                        </div>
+                        <div className="goal-task-list" style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: hiddenCount > 0 || tasksExpanded ? '12px' : '24px' }}>
+                            {visibleTasks.map((t) => (
+                                <button 
+                                    key={t._idx} 
+                                    onClick={() => toggleTask(t._idx)}
+                                    disabled={loading}
+                                    className="custom-task-btn"
+                                    style={{
+                                        display: 'flex', alignItems: 'flex-start', gap: '12px', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left',
+                                        opacity: t.completed ? 0.5 : 1, transition: 'all 0.2s', textDecoration: t.completed ? 'line-through' : 'none'
+                                    }}
+                                    title="Toggle Task"
+                                >
+                                    <div style={{ color: t.completed ? 'var(--green)' : 'var(--overlay0)', flexShrink: 0, marginTop: '2px', transition: 'color 0.2s' }}>
+                                        {t.completed ? <CheckCircle size={18} /> : <Circle size={18} />}
+                                    </div>
+                                    <span style={{ fontSize: '0.95rem', color: 'var(--text)', lineHeight: 1.4 }}>{t.title}</span>
+                                </button>
+                            ))}
+                        </div>
+                        {(hiddenCount > 0 || tasksExpanded) && (
+                            <button
+                                type="button"
+                                onClick={() => setTasksExpanded(p => !p)}
                                 style={{
-                                    display: 'flex', alignItems: 'flex-start', gap: '12px', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left',
-                                    opacity: t.completed ? 0.5 : 1, transition: 'all 0.2s', textDecoration: t.completed ? 'line-through' : 'none'
+                                    display: 'flex', alignItems: 'center', gap: 6,
+                                    background: 'var(--surface0)', border: 'none',
+                                    borderRadius: 20, padding: '5px 13px',
+                                    fontSize: '0.78rem', fontWeight: 700,
+                                    color: 'var(--subtext1)', cursor: 'pointer',
+                                    marginBottom: 20, transition: 'background 0.15s',
                                 }}
-                                title="Toggle Task"
+                                onMouseEnter={e => e.currentTarget.style.background = 'var(--surface1)'}
+                                onMouseLeave={e => e.currentTarget.style.background = 'var(--surface0)'}
                             >
-                                <div style={{ color: t.completed ? 'var(--green)' : 'var(--overlay0)', flexShrink: 0, marginTop: '2px', transition: 'color 0.2s' }}>
-                                    {t.completed ? <CheckCircle size={18} /> : <Circle size={18} />}
-                                </div>
-                                <span style={{ fontSize: '0.95rem', color: 'var(--text)', lineHeight: 1.4 }}>{t.title}</span>
+                                {tasksExpanded
+                                    ? '▲ Show less'
+                                    : `▼ Show ${hiddenCount} more task${hiddenCount !== 1 ? 's' : ''}`
+                                }
                             </button>
-                        ))}
+                        )}
                     </div>
-                </div>
-            )}
+                );
+            })()}
 
             {goal.metadata && (
                 <div className="goal-meta-preview">

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import api from '../api/axios';
 import { X } from 'lucide-react';
 
 const ALL_DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -22,10 +23,9 @@ export default function GoalModal({ goal, onSave, onClose }) {
     const [momentumPrograms, setMomentumPrograms] = useState([]);
 
     useEffect(() => {
-        try {
-           const local = localStorage.getItem('momentum_data');
-           if (local) setMomentumPrograms(JSON.parse(local).programs || []);
-        } catch(e) {}
+        api.get('/momentum')
+            .then(res => setMomentumPrograms(res.data.programs || []))
+            .catch(() => {});
     }, []);
 
     const set = (key, val) => { setForm(p => ({ ...p, [key]: val })); setError(''); };

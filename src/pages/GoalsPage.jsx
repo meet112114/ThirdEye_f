@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Plus, Target } from 'lucide-react';
+import { Plus, Target, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api/axios';
 import GoalCard from '../components/GoalCard';
 import GoalModal from '../components/GoalModal';
+import GoalImportModal from '../components/GoalImportModal';
 
 export default function GoalsPage() {
     const [goals, setGoals] = useState([]);
     const [loading, setLoading] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
     const [editingGoal, setEditingGoal] = useState(null);
+    const [importOpen, setImportOpen] = useState(false);
 
     useEffect(() => { fetchGoals(); }, []);
 
@@ -64,6 +66,18 @@ export default function GoalsPage() {
         } catch { toast.error('Could not update task'); throw new Error(); }
     };
 
+    const handleImport = async (goalsData) => {
+        try {
+            const res = await api.post('/goals/bulk', { goals: goalsData });
+            setGoals(prev => [...(res.data.goals || []), ...prev]);
+            toast.success(`Imported ${res.data.count} goal${res.data.count !== 1 ? 's' : ''} successfully!`);
+            setImportOpen(false);
+        } catch (err) {
+            toast.error(err?.response?.data?.message || 'Import failed');
+            throw err;
+        }
+    };
+
     // Partition goals
     const active = goals.filter(g => g.status === 'active');
     const archived = goals.filter(g => g.status !== 'active');
@@ -78,10 +92,20 @@ export default function GoalsPage() {
                     <h2 className="page-title">Goals</h2>
                     <p className="page-subtitle">Track your long and short-term objectives</p>
                 </div>
-                <button id="btn-add-goal" className="btn btn-primary" onClick={openAdd}
-                    style={{ width: 'auto', padding: '10px 20px' }}>
-                    <Plus size={16} /> Add Goal
-                </button>
+                <div style={{ display: 'flex', gap: 10 }}>
+                    <button
+                        id="btn-import-goals"
+                        className="btn btn-ghost"
+                        onClick={() => setImportOpen(true)}
+                        style={{ width: 'auto', padding: '10px 18px', display: 'flex', alignItems: 'center', gap: 6 }}
+                    >
+                        <Upload size={15} /> Import JSON
+                    </button>
+                    <button id="btn-add-goal" className="btn btn-primary" onClick={openAdd}
+                        style={{ width: 'auto', padding: '10px 20px' }}>
+                        <Plus size={16} /> Add Goal
+                    </button>
+                </div>
             </div>
 
             {loading ? (
@@ -145,6 +169,10 @@ export default function GoalsPage() {
 
             {modalOpen && (
                 <GoalModal goal={editingGoal} onSave={handleSave} onClose={closeModal} />
+            )}
+
+            {importOpen && (
+                <GoalImportModal onImport={handleImport} onClose={() => setImportOpen(false)} />
             )}
         </div>
     );
