@@ -138,7 +138,7 @@ export default function WorkoutPage() {
     while (true) {
         const dStr = format(checkDate, 'yyyy-MM-dd');
         const log = logs.find(l => l.date === dStr);
-        if (log && log.intensity > 0 && !log.bodyParts.includes('Rest')) {
+        if (log && ((log.intensity > 0 && !log.bodyParts.includes('Rest')) || log.bodyParts.includes('Rest'))) {
             currentStreak++;
             checkDate = subDays(checkDate, 1);
         } else {

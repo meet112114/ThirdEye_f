@@ -290,7 +290,6 @@ function ProgramDetail({ program, logs, onLog, moodLogs = [], goals = [] }) {
                     if (log.intensity === 0) {
                         tileClass += 'missed ';
                         bgColor = ''; bgOpacity = 0; textColor = 'var(--red)';
-                        borderColor = 'rgba(243, 139, 168, 0.3)';
                     }
                  }
                } else {
@@ -299,9 +298,17 @@ function ProgramDetail({ program, logs, onLog, moodLogs = [], goals = [] }) {
                    textColor = 'var(--red)';
                    borderColor = 'rgba(243, 139, 168, 0.3)';
                  } else {
-                   tileClass += 'today ';
-                   textColor = p.color;
-                   borderColor = p.color;
+                   if (p.type === 'break') {
+                     tileClass += 'today logged ';
+                     bgColor = p.color;
+                     bgOpacity = 1.0;
+                     textColor = '#111111';
+                     borderColor = p.color;
+                   } else {
+                     tileClass += 'today ';
+                     textColor = p.color;
+                     borderColor = p.color;
+                   }
                  }
                }
              }

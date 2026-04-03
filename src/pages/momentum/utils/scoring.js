@@ -47,10 +47,16 @@ export function computeProgramStats(program, logs) {
     // "If a day is missed (past applicable day with no log), auto-log intensity=0 at midnight"
     // So if it's today and not logged, we just treat it as pending (do not compute) unless it's past today.
     if (!log && date === todayStr) {
-      continue;
+      if (program.type === 'break') {
+         // Auto-apply full intensity for current day for break habits until logged otherwise
+         const pseudoLog = { intensity: 1.0, isFreeze: false };
+         // We will just process this below as if the log existed
+      } else {
+         continue;
+      }
     }
 
-    const intensity = log ? log.intensity : 0;
+    const intensity = log ? log.intensity : (!log && date === todayStr && program.type === 'break' ? 1.0 : 0);
     const isFreeze = log ? !!log.isFreeze : false;
 
     if (intensity > 0 || isFreeze) {
